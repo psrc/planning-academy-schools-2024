@@ -1,0 +1,28 @@
+﻿Term,Section,Definition
+Centers,Overall,"A defined focal area within a city or community that has a mix of housing, employment, retail and entertainment uses. It is pedestrian-oriented, which allows people to walk to different destinations or attractions. Regional centers are formally designated by the Puget Sound Regional Council."
+Schools,Overall,"For purposes of this dashboard, these are attendance area boundaries for neighborhood high schools as interpreted by PSRC staff. These boundaries are from online resources provided by each School district with a student attending the Summer Planning Academy in 2024."
+United States Census Bureau,Overall,"The Census Bureau's mission is to serve as the nation’s leading provider of quality data about its people and economy and it operates under Title 13 and Title 26 of the U.S. Code. Their goal is to provide the best mix of timeliness, relevancy, quality and cost for the data they collect and services they provide."
+American Community Survey (ACS),Overall,The American Community Survey (ACS) is an ongoing survey that provides vital information on a yearly basis about our nation and its people. Information from the survey generates data that help inform how trillions of dollars in federal funds are distributed each year.
+Office of Financial Management (OFM),Overall,State agency responsible for preparing population forecasts used by counties and their cities in development of local comprehensive plans.
+Metropolitan Planning Organization (MPO),Overall,The federally mandated forum for cooperative transportation decision-making in a metropolitan area.
+Regional Growth Strategy ,Overall,An approach for distributing population and employment growth within the four-county central Puget Sound region.
+Regional Transportation Planning Organization (RTPO),Overall,"Under state law, the body responsible for long-range, regionwide transportation planning. PSRC serves as the Regional Transportation Planning Organization for the four-county central Puget Sound region."
+Race & Ethnicity,Population,"Per the U.S. Census Bureau, racial categories included in the census questionnaire generally reflect a social definition of race recognized in this country and not an attempt to define race biologically, anthropologically, or genetically. People may choose to report more than one race to indicate their racial mixture, such as “American Indian and Alaska Native” and “white.” People who identify their origin as Hispanic, Latinx, or Spanish may be of any race. Data reporting of race and ethnic origin is based on self-identified responses to these questions."
+Educational Attainment,Population,"Per the U.S. Census Bureau, Educational attainment refers to the highest level of education that an individual has completed. This is distinct from the level of schooling that an individual is attending."
+Housing Tenure,Housing,Occupied housing units in the ACS are split into two categories: renter-occupied and owner-occupied. This distinction is known as “tenure” (think “tenant”).
+SF Detached Housing Units,Housing,1 detached housing unit
+Moderate-low density Housing Units,Housing,1 to 10 attached housing units
+Moderate-high density Housing Units,Housing,10 to 19 attached housing units
+High density Housing Units,Housing,more than 20 attached housing units
+Other Housing Units,Housing,"Mobile homes, boats, rvs, vans, etc."
+Cost Burden,Housing,"Amount of income spent on housing. Households are considered cost burdened when they spend more than 30% of their income on rent, mortgage and other housing needs. Households are considered severely cost burdened when they spend more than 50% of their income on rent, mortgage and other housing needs."
+Commute,Transportation,"Regular travel between home and a fixed location (e.g., work, school)."
+Mode,Transportation,"A particular form of travel (e.g., walking, bicycling, driving alone, carpool or vanpool, bus, train, ferry, or airplane)"
+Mode Split,Transportation,A term that describes the relative number of people using various forms — or modes — of transportation. Frequently used to describe the percentage of people using private automobiles as opposed to the percentage using transit
+Drove Alone,Transportation,A motor vehicle occupied by the driver only
+Carpooled,Transportation,A motor vehicle with two or more people traveling in it. A high-occupancy vehicle lane refers to a highway and arterial lane restricted to vehicles carrying multiple occupants or passengers (with the exception of motorcycles).
+Transit,Transportation,"Transit (also known as public transportation, public transit, mass transit) is a system of transport for passengers by group travel systems available for use by the general public. They are typically managed on a schedule, operated on established routes, and they may charge a posted fee for each trip."
+Bike,Transportation,"Used when the primary mode to work was via bicycle. For instance, riding a bike to the bus is recorded as a transit trip."
+Walk,Transportation,"Used when the primary mode to work was via walking. For instance, walking to catch the train is recorded as a transit trip."
+Work from Home,Transportation,"Working from home is a work arrangement where employees perform their job responsibilities remotely, typically from their own homes instead of an office."
+Other Mode,Transportation,"Modes such as helicopters, planes, e-scooters, etc."
