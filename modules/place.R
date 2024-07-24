@@ -122,6 +122,10 @@ place_server <- function(id, place_type) {
                                 x = "grouping", y = "share", fill="geography", tog = "year", 
                                 dec = 0, esttype = "percent", color = "jewel", left_align = '15%')})
     
+    output$stops_table <- renderDataTable(create_transit_stop_table(place_name=input$place_name, place_type = place_type))
+    
+    output$stop_map <- renderLeaflet({create_transit_map(place_name=input$place_name, place_type = place_type)})
+    
     # Tab layout
     output$place <- renderUI({
       tagList(
@@ -242,6 +246,21 @@ place_server <- function(id, place_type) {
                             ),
                     
                     tabPanel("Transportation", 
+                             
+                             # Transit Stops
+                             br(),
+                             strong(tags$div(class="chart_title","Transit Stops by Moe")),
+                             fluidRow(column(6, leafletOutput(ns("stop_map"))),
+                                      column(6, strong("Transit Service"),
+                                             br(),
+                                             dataTableOutput(ns("stops_table")),
+                                             tags$div(class="chart_source","Source: Spring 2024 GTFS Service by Transit Agency"),
+                                             br())),
+                             
+                             fluidRow(column(12, div(img(src="transit-legend.png", width = "75%", style = "padding-left: 0px;")))),
+                             tags$div(class="chart_source", "Note: Many stations show stops for each direction of travel."),
+                             
+                             br(),
                              
                              # Mode to work
                              br(),

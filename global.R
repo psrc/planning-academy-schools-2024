@@ -67,9 +67,12 @@ burden_data <- readRDS("data/cost_burden.rds") |> mutate(year = factor(year, lev
 mode_data <- readRDS("data/mode_to_work.rds") |> mutate(year = factor(year, levels=year_ord))
 vehicles_data <- readRDS("data/households_by_vehicles.rds") |> mutate(year = factor(year, levels=year_ord))
 jobs_data <- readRDS("data/jobs_data.rds") |> mutate(year = factor(year, levels=year_ord)) |> drop_na()
+stops_data <- readRDS("data/transit_stop_data.rds")
+
 rgc_shape <- readRDS("data/rgc_shape.rds") |> st_transform(wgs84) |> rename(geometry="Shape") |> mutate(geography_type = rgc_title)
 school_shape <- readRDS("data/school_shape.rds") |> st_transform(wgs84) |> mutate(geography_type = school_title)
 place_shape <- bind_rows(rgc_shape, school_shape)
+stop_shape <- readRDS("data/transit_stop_lyr.rds")
 
 # Place Summary Data ------------------------------------------------------
 max_year <- max(as.integer(as.character(jobs_data$year)))

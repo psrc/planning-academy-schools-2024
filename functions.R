@@ -520,3 +520,146 @@ create_summary_table <- function(df = summary_data, place_name, place_type) {
   
 }
 
+create_transit_stop_table <- function(place_name, place_type) {
+  
+  t <- stops_data |> 
+    filter(geography == place_name & geography_type == place_type) |>
+    select("mode", "stops") |>
+    mutate(stops = format(stops, big.mark = ","))
+  
+  headerCallbackRemoveHeaderFooter <- c(
+    "function(thead, data, start, end, display){",
+    "  $('th', thead).css('display', 'none');",
+    "}"
+  )
+  
+  summary_tbl <- datatable(t,
+                           options = list(paging = FALSE,
+                                          pageLength = 15,
+                                          searching = FALSE,
+                                          dom = 't',
+                                          headerCallback = JS(headerCallbackRemoveHeaderFooter),
+                                          columnDefs = list(list(targets = c(1), className = 'dt-right'),
+                                                            list(targets = c(0), className = 'dt-left'))),
+                           selection = 'none',
+                           callback = JS(
+                             "$('table.dataTable.no-footer').css('border-bottom', 'none');"
+                           ),
+                           class = 'row-border',
+                           filter = 'none',              
+                           rownames = FALSE,
+                           escape = FALSE
+  ) 
+  
+  # Add Section Breaks
+  summary_tbl <- summary_tbl %>%
+    formatStyle(0:ncol(t), valueColumns = "mode",
+                `border-bottom` = styleEqual(c("Light Rail or Streetcar"), "solid 2px"))
+  
+  summary_tbl <- summary_tbl %>%
+    formatStyle(0:ncol(t), valueColumns = "mode",
+                `border-top` = styleEqual(c("All Transit Stops"), "solid 2px"))
+  
+  return(summary_tbl)
+  
+}
+
+create_transit_map <- function(place_name, place_type) {
+  
+  transit_pal <- colorFactor(
+    palette = c("#BCBEC0", "#8CC63E", "#91268F", "#00A7A0", "#F05A28"),
+    levels = c("Bus", "BRT", "Commuter Rail", "Ferry", "Light Rail or Streetcar"))
+  
+  if(place_type == rgc_title) {
+    
+    place_shp <- rgc_shape |> filter(name %in% place_name) |> st_transform(wgs84)
+    
+  } else {
+    
+    place_shp <- school_shape |> filter(name %in% place_name) |> st_transform(wgs84)
+    
+  }
+  
+  data <- st_intersection(stop_shape, place_shp) |> select("stop_id", "type_name")
+
+  lrt_stops <- data |>
+    filter(type_name == "Light Rail or Streetcar") |>
+    select(Stop="stop_id", Mode="type_name") |>
+    drop_na()
+  
+  brt_stops <- data |>
+    filter(type_name == "Bus Rapid Transit") |>
+    select(Stop="stop_id", Mode="type_name") |>
+    drop_na()
+  
+  crt_stops <- data |>
+    filter(type_name == "Commuter Rail") |>
+    select(Stop="stop_id", Mode="type_name") |>
+    drop_na()
+  
+  ferry_stops <- data |>
+    filter(type_name == "Ferry") |>
+    select(Stop="stop_id", Mode="type_name") |>
+    drop_na()
+  
+  bus_stops <- data |>
+    filter(type_name == "Bus") |>
+    select(Stop="stop_id", Mode="type_name") |>
+    drop_na()
+  
+  m <- leaflet() |>
+    
+    addProviderTiles(providers$CartoDB.Positron) |>
+    
+    addLayersControl(baseGroups = c("Base Map"),
+                     overlayGroups = c("Bus",
+                                       "BRT", 
+                                       "Commuter Rail",
+                                       "Ferry",
+                                       "Light Rail or Streetcar", 
+                                       "School"),
+                     options = layersControlOptions(collapsed = TRUE)) |>
+    
+    addPolygons(data = place_shp,
+                fillColor = "76787A",
+                weight = 4,
+                opacity = 1.0,
+                color = "#EB4584",
+                dashArray = "4",
+                fillOpacity = 0.0,
+                group="School") |>
+    
+    addCircles(data=bus_stops, 
+               group="Bus",
+               color = "#BCBEC0",
+               opacity = 1.0,
+               fillOpacity = 1.0) |>
+    
+    addCircles(data=brt_stops, 
+               group="BRT",
+               color = "#8CC63E",
+               opacity = 1.0,
+               fillOpacity = 1.0) |>
+    
+    addCircles(data=crt_stops, 
+               group="Commuter Rail",
+               color = "#91268F",
+               opacity = 1.0,
+               fillOpacity = 1.0) |>
+    
+    addCircles(data=ferry_stops, 
+               group="Ferry",
+               color = "#00A7A0",
+               opacity = 1.0,
+               fillOpacity = 1.0) |>
+    
+    addCircles(data=lrt_stops, 
+               group="Light Rail or Streetcar",
+               color = "#F05A28",
+               opacity = 1.0,
+               fillOpacity = 1.0)
+  
+  return(m)
+  
+  
+}
