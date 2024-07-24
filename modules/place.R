@@ -249,7 +249,7 @@ place_server <- function(id, place_type) {
                              
                              # Transit Stops
                              br(),
-                             strong(tags$div(class="chart_title","Transit Stops by Moe")),
+                             strong(tags$div(class="chart_title","Transit Stops by Mode")),
                              fluidRow(column(6, leafletOutput(ns("stop_map"))),
                                       column(6, strong("Transit Service"),
                                              br(),
