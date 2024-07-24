@@ -69,8 +69,8 @@ vehicles_data <- readRDS("data/households_by_vehicles.rds") |> mutate(year = fac
 jobs_data <- readRDS("data/jobs_data.rds") |> mutate(year = factor(year, levels=year_ord)) |> drop_na()
 stops_data <- readRDS("data/transit_stop_data.rds")
 
-rgc_shape <- readRDS("data/rgc_shape.rds") |> st_transform(wgs84) |> rename(geometry="Shape") |> mutate(geography_type = rgc_title)
-school_shape <- readRDS("data/school_shape.rds") |> st_transform(wgs84) |> mutate(geography_type = school_title)
+rgc_shape <- readRDS("data/rgc_shape.rds") |> st_make_valid() |> st_transform(wgs84) |> rename(geometry="Shape") |> mutate(geography_type = rgc_title)
+school_shape <- readRDS("data/school_shape.rds") |> st_make_valid() |> st_transform(wgs84) |> mutate(geography_type = school_title)
 place_shape <- bind_rows(rgc_shape, school_shape)
 stop_shape <- readRDS("data/transit_stop_lyr.rds")
 
