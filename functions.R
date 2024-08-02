@@ -580,33 +580,39 @@ create_transit_map <- function(place_name, place_type) {
     
   }
   
-  data <- st_intersection(stop_shape, place_shp) |> select("stop_id", "type_name")
-
-  lrt_stops <- data |>
-    filter(type_name == "Light Rail or Streetcar") |>
-    select(Stop="stop_id", Mode="type_name") |>
-    drop_na()
+  # Transit Stops
+  stops <- st_intersection(stop_shape, place_shp) |> select(Stop = "stop_id", Mode = "type_name")
+  lrt_stops <- stops |> filter(Mode == "Light Rail or Streetcar") |> drop_na()
+  brt_stops <- stops |> filter(Mode == "Bus Rapid Transit") |> drop_na()
+  crt_stops <- stops |> filter(Mode == "Commuter Rail") |> drop_na()
+  ferry_stops <- stops |> filter(Mode == "Ferry") |> drop_na()
+  bus_stops <- stops |> filter(Mode == "Bus") |> drop_na()
   
-  brt_stops <- data |>
-    filter(type_name == "Bus Rapid Transit") |>
-    select(Stop="stop_id", Mode="type_name") |>
-    drop_na()
+  # Transit Routes
+  route_list <- st_intersection(route_shape, place_shp) |> st_drop_geometry() |> select("route_name") |> distinct() |> pull()
+  routes <- route_shape |> filter(route_name %in% route_list) |> select(Route = "route_name", Mode = "type_name", Agency = "agency_name")
+  lrt_routes <- routes |> filter(Mode == "Light Rail or Streetcar") |> drop_na()
+  brt_routes <- routes |> filter(Mode == "Bus Rapid Transit") |> drop_na()
+  crt_routes <- routes |> filter(Mode == "Commuter Rail") |> drop_na()
+  ferry_routes <- routes |> filter(Mode == "Ferry") |> drop_na()
+  bus_routes <- routes |> filter(Mode == "Bus") |> drop_na()
   
-  crt_stops <- data |>
-    filter(type_name == "Commuter Rail") |>
-    select(Stop="stop_id", Mode="type_name") |>
-    drop_na()
+  # Labels for Transit Routes by Mode
+  lrt_labels <- paste0("<b>","Route Name: ", "</b>", lrt_routes$Route, "<b> <br>", paste0("Agency: "), "</b>", lrt_routes$Agency, "<b> <br>", paste0("Mode: "), "</b>", lrt_routes$Mode) |> lapply(htmltools::HTML)
+  brt_labels <- paste0("<b>","Route Name: ", "</b>", brt_routes$Route, "<b> <br>", paste0("Agency: "), "</b>", brt_routes$Agency, "<b> <br>", paste0("Mode: "), "</b>", brt_routes$Mode) |> lapply(htmltools::HTML)
+  crt_labels <- paste0("<b>","Route Name: ", "</b>", crt_routes$Route, "<b> <br>", paste0("Agency: "), "</b>", crt_routes$Agency, "<b> <br>", paste0("Mode: "), "</b>", crt_routes$Mode) |> lapply(htmltools::HTML)
+  ferry_labels <- paste0("<b>","Route Name: ", "</b>", ferry_routes$Route, "<b> <br>", paste0("Agency: "), "</b>", ferry_routes$Agency, "<b> <br>", paste0("Mode: "), "</b>", ferry_routes$Mode) |> lapply(htmltools::HTML)
+  bus_labels <- paste0("<b>","Route Name: ", "</b>", bus_routes$Route, "<b> <br>", paste0("Agency: "), "</b>", bus_routes$Agency, "<b> <br>", paste0("Mode: "), "</b>", bus_routes$Mode) |> lapply(htmltools::HTML)
   
-  ferry_stops <- data |>
-    filter(type_name == "Ferry") |>
-    select(Stop="stop_id", Mode="type_name") |>
-    drop_na()
+  # Get Bounding Box for Place Shape so map doesn't zoom out to full rotue extents
+  c <- leaflet() |> addPolygons(data = place_shp)
+  center_limits <- c$x["limits"]
+  lat1 <- center_limits$limits$lat[1]
+  lat2 <- center_limits$limits$lat[2]
+  lng1 <- center_limits$limits$lng[1]
+  lng2 <- center_limits$limits$lng[2]
   
-  bus_stops <- data |>
-    filter(type_name == "Bus") |>
-    select(Stop="stop_id", Mode="type_name") |>
-    drop_na()
-  
+  # Create Transit Map with Stops and Routes
   m <- leaflet() |>
     
     addProviderTiles(providers$CartoDB.Positron) |>
@@ -617,8 +623,38 @@ create_transit_map <- function(place_name, place_type) {
                                        "Commuter Rail",
                                        "Ferry",
                                        "Light Rail or Streetcar", 
-                                       "School"),
+                                       "RGC"),
                      options = layersControlOptions(collapsed = TRUE)) |>
+    
+    addPolylines(data=bus_routes, 
+                 group="Bus",
+                 weight = 4, 
+                 label = bus_labels, 
+                 color = "#BCBEC0") |>
+    
+    addPolylines(data=brt_routes, 
+                 group="BRT",
+                 weight = 4, 
+                 label = brt_labels, 
+                 color = "#8CC63E") |>
+    
+    addPolylines(data=crt_routes, 
+                 group="Commuter Rail",
+                 weight = 4, 
+                 label = crt_labels, 
+                 color = "#91268F") |>
+    
+    addPolylines(data=ferry_routes, 
+                 group="Ferry",
+                 weight = 4, 
+                 label = ferry_labels, 
+                 color = "#00A7A0") |>
+    
+    addPolylines(data=lrt_routes, 
+                 group="Light Rail or Streetcar",
+                 weight = 4, 
+                 label = lrt_labels, 
+                 color = "#F05A28") |>
     
     addPolygons(data = place_shp,
                 fillColor = "76787A",
@@ -627,37 +663,39 @@ create_transit_map <- function(place_name, place_type) {
                 color = "#EB4584",
                 dashArray = "4",
                 fillOpacity = 0.0,
-                group="School") |>
+                group="RGC") |>
     
     addCircles(data=bus_stops, 
                group="Bus",
-               color = "#BCBEC0",
+               color = "#76787A",
                opacity = 1.0,
                fillOpacity = 1.0) |>
     
     addCircles(data=brt_stops, 
                group="BRT",
-               color = "#8CC63E",
+               color = "#3f6618",
                opacity = 1.0,
                fillOpacity = 1.0) |>
     
     addCircles(data=crt_stops, 
                group="Commuter Rail",
-               color = "#91268F",
+               color = "#4a0048",
                opacity = 1.0,
                fillOpacity = 1.0) |>
     
     addCircles(data=ferry_stops, 
                group="Ferry",
-               color = "#00A7A0",
+               color = "#005753",
                opacity = 1.0,
                fillOpacity = 1.0) |>
     
     addCircles(data=lrt_stops, 
                group="Light Rail or Streetcar",
-               color = "#F05A28",
+               color = "#7a2700",
                opacity = 1.0,
-               fillOpacity = 1.0)
+               fillOpacity = 1.0) |>
+    
+    fitBounds(lng1 = lng1, lat1 = lat1, lng2 = lng2, lat2 = lat2)
   
   return(m)
   

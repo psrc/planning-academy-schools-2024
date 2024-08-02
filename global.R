@@ -73,6 +73,7 @@ rgc_shape <- readRDS("data/rgc_shape.rds") |> st_make_valid() |> st_transform(wg
 school_shape <- readRDS("data/school_shape.rds") |> st_make_valid() |> st_transform(wgs84) |> mutate(geography_type = school_title)
 place_shape <- bind_rows(rgc_shape, school_shape)
 stop_shape <- readRDS("data/transit_stop_lyr.rds")
+route_shape <- readRDS("data/transit_route_lyr.rds")
 
 # Place Summary Data ------------------------------------------------------
 max_year <- max(as.integer(as.character(jobs_data$year)))
